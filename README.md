@@ -207,7 +207,7 @@ Ambos vectores se concatenaron para formar la representación final de cada twee
 ![Embeddings promedio - Right](img/embedings3.png)
 
 **Matriz de similitud semántica promedio entre clases ideológicas**
-¡[calor](img/calor.png)
+![calor](img/calor.png)
 
 #### 3) BERT Embeddings (Contextuales)
 
