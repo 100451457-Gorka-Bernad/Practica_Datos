@@ -222,16 +222,16 @@ La figura muestra un solapamiento considerable entre las distintas ideologías. 
 
 #### Proyección individual por clase ideológica
 
-**Left**
+**Embeddings promedio – Left**  
 ![Proyección 2D de embeddings – left](img/bert_left.png)
 
-**Moderate Left**
+**Embeddings promedio – Moderate Left**  
 ![Proyección 2D de embeddings – moderate_left](img/bert_moderate_left.png)
 
-**Moderate Right**
+**Embeddings promedio – Moderate Right**  
 ![Proyección 2D de embeddings – moderate_right](img/bert_moderate_right.png)
 
-**Right**
+**Embeddings promedio – Right**  
 ![Proyección 2D de embeddings – right](img/bert_right.png)
 
 **Matriz de similitud semántica promedio entre clases ideológicas**
@@ -513,26 +513,18 @@ moderate_right       0.45      0.44      0.45      1080
 
 Comparativa final:
 
-| Modelo           | Accuracy  | F1-macro  | ROC-AUC  |
-|------------------|-----------|-----------|----------|
-| 0                |           |           |          |
-| LR + TF-IDF      | 0.379444  | 0.356050  | 0.635392 |
-| 1                |           |           |          |
-| SVM + TF-IDF     | 0.363611  | 0.341354  | 0.626499 |
-| 2                |           |           |          |
-| MLP + TF-IDF     | 0.388611  | 0.344749  | NaN      |
-| 3                |           |           |          |
-| LR + Word2Vec    | 0.310278  | 0.298363  | 0.589339 |
-| 4                |           |           |          |
-| SVM + Word2Vec   | 0.312778  | 0.303818  | 0.591209 |
-| 5                |           |           |          |
-| MLP + Word2Vec   | 0.290833  | 0.228021  | NaN      |
-| 6                |           |           |          |
-| LR + BERT emb    | 0.379167  | 0.367103  | 0.645298 |
-| 7                |           |           |          |
-| SVM + BERT emb   | 0.373611  | 0.363960  | 0.643901 |
-| 8                |           |           |          |
-| MLP + BERT emb   | 0.408889  | 0.348186  | NaN      |
+| Modelo         | Accuracy  | F1-macro  | ROC-AUC  |
+|----------------|-----------|-----------|----------|
+| LR + TF-IDF    | 0.379444  | 0.356050  | 0.635392 |
+| SVM + TF-IDF   | 0.363611  | 0.341354  | 0.626499 |
+| MLP + TF-IDF   | 0.388611  | 0.344749  | NaN      |
+| LR + Word2Vec  | 0.310278  | 0.298363  | 0.589339 |
+| SVM + Word2Vec | 0.312778  | 0.303818  | 0.591209 |
+| MLP + Word2Vec | 0.290833  | 0.228021  | NaN      |
+| LR + BERT emb  | 0.379167  | 0.367103  | 0.645298 |
+| SVM + BERT emb | 0.373611  | 0.363960  | 0.643901 |
+| MLP + BERT emb | 0.408889  | 0.348186  | NaN      |
+
 
 ## Clasificación binaria
 
