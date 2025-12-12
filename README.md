@@ -201,10 +201,10 @@ Ambos vectores se concatenaron para formar la representación final de cada twee
 ![Embeddings promedio - Left](img/embedings3.png)
 
 **Embeddings promedio – Moderate Right**  
-![Embeddings promedio - Moderate Right](img/embedings4.png)
+![Embeddings promedio - Moderate Right](img/embedings5.png)
 
 **Embeddings promedio – Right**  
-![Embeddings promedio - Right](img/embedings5.png)
+![Embeddings promedio - Right](img/embedings6.png)
 
 **Matriz de similitud semántica promedio entre clases ideológicas**
 ¡[calor](img/calor.png)
