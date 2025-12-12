@@ -1,5 +1,6 @@
 # Análisis de polarización ideológica en Twitter
-**Proyecto Final – Tratamiento de Datos**
+**Proyecto Final - Tratamiento de Datos**
+
 
 ## Autores
 - Patricia Barbero Rodríguez — 100363955  
@@ -11,15 +12,13 @@
 
 ## Descripción del problema
 
-Este proyecto estudia la relación entre contenido ideológico y patrones lingüísticos en Twitter con el objetivo de:
+Este proyecto estudia la relación entre contenido ideológico y patrones lingüísticos en twitter con el objetivo de:
 
 - Identificar la orientación ideológica de distintas publicaciones.
-- Analizar la polarización ideológica mediante embeddings.
+- Analizar la polarización ideológica mediante los embeddings.
 - Comparar estrategias de modelado y embeddings.
 
-Para ello utilizamos el conjunto de datos: **POLITiCES 2023: Political Ideology and Power in Spanish Society**.
-
----
+Para ello utilizamos el conjunto de datos: POLITiCES 2023: Political Ideology and Power in Spanish Society (dado en el documento)
 
 ## Descripción del conjunto de datos
 
@@ -63,10 +62,11 @@ Para ello utilizamos el conjunto de datos: **POLITiCES 2023: Political Ideology 
 | ideology_multiclass | 4 |
 | tweet | 14384 |
 
-### Observaciones
 
-- Dataset desbalanceado (clases `left` y `right` subrepresentadas).
-- Muchos tweets son genéricos y no muestran ideología de forma explícita.
+**OBSERVACIONES:**
+
+- Dataset desbalanceado (clases left y right están subrepresentadas)
+- Datos muy genéricos (tweets que no muestran ideología en su mayoría)
 
 ---
 
@@ -74,26 +74,365 @@ Para ello utilizamos el conjunto de datos: **POLITiCES 2023: Political Ideology 
 
 ### Parte 1: Análisis exploratorio del conjunto de datos
 
-Se ha realizado un análisis exploratorio que incluye:
+Se ha realizado un análisis exploratorio inicial con el objetivo de comprender la estructura, composición y características generales del conjunto de datos antes del preprocesado y el modelado. Este análisis incluye las siguientes visualizaciones y observaciones:
 
-- Distribución del número de tweets por variable (barras y gráfico circular).
--(![graficas_variables](img/graficas_2.png))
-- Distribución de ideologías (barras subdivididas por género y profesión).
-- Histograma de la longitud de los tweets.
-- Nubes de palabras antes de la limpieza para visualizar diferencias.
-
-### Imágenes en GitHub (README.md)
-
-Para que las imágenes se vean correctamente en GitHub:
-
-1. Crear una carpeta (por ejemplo `img/`) en el repositorio.
-2. Guardar allí las figuras exportadas (por ejemplo `img/distribucion_ideologias.png`).
-3. Referenciarlas en el README así:
-
-```md
-![image alt](https://github.com/100451457-Gorka-Bernad/Practica_Datos/blob/main/img/embedings3.png?raw=true)
-```
 ---
+
+#### Distribución de tweets por variables demográficas e ideológicas
+
+![graficas_variables](https://github.com/100451457-Gorka-Bernad/Practica_Datos/blob/main/img/graficas_variables.png?raw=true)
+
+La figura muestra que el conjunto de datos no está distribuido de forma uniforme. La mayoría de los tweets proceden de autores masculinos y del perfil profesional de periodista. En cuanto a la ideología, las clases moderadas concentran un mayor número de muestras, mientras que las posiciones ideológicas extremas están menos representadas. Esta visualización ofrece una primera visión general de la composición del dataset antes del modelado.
+
+---
+
+#### Distribución conjunta de ideología con género y profesión
+
+![analisis_conjunto](img/graficas_2.png)
+
+La figura representa la distribución conjunta de la ideología según el género y la profesión. En ambos casos se observa que las categorías *moderate_left* y *moderate_right* concentran la mayor parte de los tweets dentro de cada subgrupo. El reparto ideológico es similar entre hombres y mujeres, así como entre periodistas, políticos y celebridades, aunque existen diferencias en el volumen total de tweets por categoría. Esta visualización permite contextualizar cómo se distribuyen las ideologías dentro de los distintos perfiles del dataset.
+
+---
+
+#### Distribución de la longitud de los tweets
+
+![histograma](img/histograma.png)
+
+La figura muestra la distribución de la longitud de los tweets medida en número de palabras. La mayor parte de los mensajes se concentra en un rango intermedio, aproximadamente entre 10 y 45 palabras, con una menor frecuencia de tweets muy cortos o muy largos. Esta distribución sugiere una variabilidad moderada en la extensión de los textos, adecuada para el análisis de patrones lingüísticos sin predominio claro de mensajes extremos en longitud.
+
+---
+
+#### Análisis léxico preliminar mediante nubes de palabras (sin limpieza)
+
+![nube sin limpiar 1](img/nubes1.png)  
+![nube sin limpiar 2](https://github.com/100451457-Gorka-Bernad/Practica_Datos/blob/main/img/nubes2.png?raw=true)  
+![nube sin limpiar 3](img/nubes3.png)
+
+Las visualizaciones muestran que, independientemente de si los tweets se agrupan por profesión, ideología o género, predominan palabras muy frecuentes y poco informativas como artículos, preposiciones, pronombres y marcas técnicas propias de Twitter (por ejemplo, *user* y *hashtag*). Estas palabras aparecen de forma muy similar en todos los grupos, lo que dificulta identificar diferencias reales en el contenido ideológico o discursivo.
+
+En conjunto, las nubes evidencian que el texto bruto contiene un alto nivel de ruido lingüístico y numerosos elementos comunes que no aportan significado semántico relevante. Esto justifica la necesidad de aplicar un proceso de limpieza y preprocesado del texto antes de cualquier representación vectorial o fase de modelado, con el objetivo de eliminar términos vacíos y resaltar palabras con mayor capacidad discriminativa.
+
+---
+
+#### Comparación de la longitud de los tweets por ideología
+
+![velas](img/velas.png)
+
+La figura muestra la distribución de la longitud de los tweets, medida en número de palabras, para cada ideología. Se observa que las cuatro categorías presentan rangos y medianas similares, con una dispersión comparable y sin diferencias claras en la extensión de los mensajes. Esto indica que la longitud del tweet no varía de forma apreciable entre ideologías y que, a priori, no parece un factor diferenciador dentro del conjunto de datos.
+
+
+### Parte 2: Representación vectorial del texto
+
+Antes de aplicar cualquier técnica de representación vectorial, se realizó un **preprocesado del texto** sobre todos los tweets del conjunto de datos. Este proceso de limpieza incluye la eliminación de palabras vacías (artículos, preposiciones), menciones a usuarios (`@user`), URLs y otros elementos propios de Twitter que no aportan información semántica relevante y pueden obstaculizar el entrenamiento y el análisis posterior.
+
+A continuación, se comparan tres estrategias diferentes de representación del texto.
+
+---
+
+#### 1) Representación léxica mediante TF-IDF
+
+Se utilizó un modelo **TF-IDF (Term Frequency–Inverse Document Frequency)** como representación léxica, implementado mediante `TfidfVectorizer` de *scikit-learn*. Esta técnica genera una matriz dispersa (*sparse*) que refleja la importancia relativa de cada término en el conjunto de documentos, y que posteriormente se emplea como entrada para los modelos de clasificación.
+
+##### Dimensiones resultantes de la matriz TF-IDF
+
+- Train set: **(10080, 5000)**
+- Validation set: **(4320, 5000)**
+- Test set: **(3600, 5000)**
+
+##### Palabras con mayor peso TF-IDF
+
+```
+gracias       120.42
+gobierno      114.02
+españa        108.05
+años          103.32
+ley            73.89
+madrid         73.56
+gente          62.00
+mundo          57.87
+año            57.62
+país           56.74
+vida           51.56
+política       51.05
+cosas          50.53
+trabajo        46.41
+mujeres        45.46
+presidente     45.33
+izquierda      43.92
+personas       43.69
+partido        43.17
+historia       42.03
+```
+
+##### Nubes de palabras tras limpieza del texto (TF-IDF)
+
+**Ideología: Left**  
+![Nube TF-IDF - Left](img/nube_left.png)
+
+**Ideología: Moderate Left**  
+![Nube TF-IDF - Moderate Left](img/nube_moderate_left.png)
+
+**Ideología: Right**  
+![Nube TF-IDF - Right](img/nube_right.png)
+
+**Ideología: Moderate Right**  
+![Nube TF-IDF - Moderate Right](img/nube_moderate_right.png)
+
+---
+
+#### 2) Representación semántica mediante Word2Vec
+
+Para la representación semántica se entrenó un modelo **Word2Vec** sobre el corpus de tweets ya limpiados. Dado que Word2Vec genera embeddings a nivel de palabra, la representación final de cada tweet se obtuvo combinando dos agregaciones:
+
+- El **promedio** de los embeddings de todas las palabras del tweet.
+- El **máximo** elemento a elemento de esos embeddings.
+
+Ambos vectores se concatenaron para formar la representación final de cada tweet.
+
+##### Visualización de embeddings promedio por ideología
+
+**Embeddings promedio – conjunto de entrenamiento**  
+![Embeddings promedio - Train](img/emb_word.png)
+
+**Embeddings promedio – Moderate Left**  
+![Embeddings promedio - Moderate Left](img/word_moderate_left.png)
+
+**Embeddings promedio – Left**  
+![Embeddings promedio - Left](img/word_left.png)
+
+**Embeddings promedio – Moderate Right**  
+![Embeddings promedio - Moderate Right](img/word_moderate_right.png)
+
+**Embeddings promedio – Right**  
+![Embeddings promedio - Right](img/word_right.png)
+
+**Matriz de similitud semántica promedio entre clases ideológicas**
+![calor](img/calor.png)
+
+#### 3) BERT Embeddings (Contextuales)
+
+Utilizando "sentence-transformers/distiluse-base-multilingual-cased-v2", se obtuvieron embeddings que capturan las relaciones semánticas, desambiguación por contexto y similitud semántica entre frases completas.
+
+
+## Modelado y evaluación
+
+Se han entrenado, haciendo uso de cada una de las representaciones vectoriales, un regresor logístico, un svm, y una red neuronal para poder evaluar su rendimiento:
+
+### TF-IDF
+
+==== VAL LR + TFIDF ====
+                precision    recall  f1-score   support
+
+          left       0.32      0.40      0.36       828
+ moderate_left       0.51      0.44      0.47      1572
+moderate_right       0.49      0.41      0.45      1416
+         right       0.23      0.35      0.28       504
+
+      accuracy                           0.41      4320
+     macro avg       0.39      0.40      0.39      4320
+  weighted avg       0.44      0.41      0.42      4320
+
+==== TEST LR + TFIDF ====
+                precision    recall  f1-score   support
+
+          left       0.27      0.35      0.31       640
+ moderate_left       0.49      0.39      0.43      1440
+moderate_right       0.43      0.41      0.42      1080
+         right       0.23      0.31      0.26       440
+
+      accuracy                           0.38      3600
+     macro avg       0.36      0.37      0.36      3600
+  weighted avg       0.40      0.38      0.39      3600
+
+==== VAL SVM + TFIDF ====
+                precision    recall  f1-score   support
+
+          left       0.31      0.40      0.35       828
+ moderate_left       0.51      0.45      0.48      1572
+moderate_right       0.50      0.40      0.44      1416
+         right       0.24      0.34      0.28       504
+
+      accuracy                           0.41      4320
+     macro avg       0.39      0.40      0.39      4320
+  weighted avg       0.44      0.41      0.42      4320
+
+==== TEST SVM + TFIDF ====
+                precision    recall  f1-score   support
+
+          left       0.26      0.37      0.30       640
+ moderate_left       0.48      0.37      0.42      1440
+moderate_right       0.42      0.39      0.40      1080
+         right       0.22      0.28      0.24       440
+
+      accuracy                           0.36      3600
+     macro avg       0.34      0.35      0.34      3600
+  weighted avg       0.39      0.36      0.37      3600
+
+=== TEST MLP + TF-IDF ===
+             precision    recall  f1-score   support
+
+           0       0.27      0.25      0.26       640
+           1       0.47      0.45      0.46      1440
+           2       0.39      0.46      0.42      1080
+           3       0.25      0.22      0.24       440
+
+    accuracy                           0.39      3600
+   macro avg       0.35      0.34      0.34      3600
+weighted avg       0.39      0.39      0.39      3600
+
+
+### Interpretación de resultados con TF-IDF
+
+Observando los resultados obtenidos, se puede ver que para los tres modelos entrenados el accuracy no es muy elevado. En los sets de validación el regresor logístico obtiene un accuracy de 38%, el SVM de 36% y red neuronal entrenada con 10 épocas y usando la técnica de generalización de dropout obtiene de accuracy un 39%. Aunque a la red neuronal se le ha dado algo mejor, no es significativo. En general, a los tres modelos entrenados se les ha dado bastante mal clasificar la ideología política de los tweets.
+ 
+Esto se debe a que los tweets del dataset son ambiguos y es muy complicado que los modelos consigan encontrar un patrón significativo que consiga diferenciar las 4 clases. 
+
+Es importante destacar que los resultados obtenidos tanto en el set de validación como en el set de test son muy similares. Se puede concluir que no ha habido sobreajuste significativos.
+
+De las 4 clases, a los 3 modelos les cuesta más clasificar los extremos y la clase que mejor clasifica es ‘moderate_left’, ya que presenta valores más bajos de precisión y recall.
+
+### Word2Vec
+
+==== VAL LR + Word2Vec ====
+                precision    recall  f1-score   support
+
+          left       0.25      0.32      0.29       828
+ moderate_left       0.47      0.34      0.40      1572
+moderate_right       0.42      0.31      0.36      1416
+         right       0.19      0.40      0.26       504
+
+      accuracy                           0.34      4320
+     macro avg       0.33      0.34      0.32      4320
+  weighted avg       0.38      0.34      0.35      4320
+
+==== TEST LR + Word2Vec ====
+                precision    recall  f1-score   support
+
+          left       0.21      0.29      0.24       640
+ moderate_left       0.46      0.30      0.36      1440
+moderate_right       0.39      0.31      0.35      1080
+         right       0.18      0.36      0.24       440
+
+      accuracy                           0.31      3600
+     macro avg       0.31      0.32      0.30      3600
+  weighted avg       0.36      0.31      0.32      3600
+==== VAL SVM + Word2Vec ====
+                precision    recall  f1-score   support
+
+          left       0.25      0.36      0.30       828
+ moderate_left       0.48      0.34      0.39      1572
+moderate_right       0.41      0.28      0.33      1416
+         right       0.18      0.38      0.25       504
+
+      accuracy                           0.33      4320
+     macro avg       0.33      0.34      0.32      4320
+  weighted avg       0.38      0.33      0.34      4320
+
+==== TEST SVM + Word2Vec ====
+                precision    recall  f1-score   support
+
+          left       0.21      0.34      0.26       640
+ moderate_left       0.48      0.30      0.37      1440
+moderate_right       0.40      0.28      0.33      1080
+         right       0.19      0.39      0.26       440
+
+      accuracy                           0.31      3600
+     macro avg       0.32      0.33      0.30      3600
+  weighted avg       0.37      0.31      0.32      3600
+=== TEST MLP + Word2Vec ===
+              precision    recall  f1-score   support
+
+           0       0.22      0.10      0.14       640
+           1       0.46      0.44      0.45      1440
+           2       0.43      0.02      0.04      1080
+           3       0.17      0.74      0.28       440
+
+    accuracy                           0.29      3600
+   macro avg       0.32      0.33      0.23      3600
+weighted avg       0.37      0.29      0.25      3600
+
+### Interpretación de resultados con Word2Vec
+Los resultados obtenidos con Word2Vec son claramente inferiores a los alcanzados con TF-IDF y BERT. En todos los modelos evaluados, la accuracy se sitúa alrededor del 30% - 34%, con valores de F1-score bajos, lo que indica dificultades para clasificar todas las clases ideológicas.
+Esta pérdida de rendimiento puede atribuirse a la naturaleza de Word2Vec, que genera  embeddings a nivel de palabra y requiere una agregación simple (promedio y máximo) para representar frases completas. Este proceso elimina información contextual clave, especialmente relevante en el discurso político, donde el significado ideológico depende en gran medida de la combinación y el contexto de las palabras.
+
+La red neuronal multicapa presenta un comportamiento inestable, con recalls muy bajos para algunas clases y muy altos para otras, lo que sugiere un colapso hacia determinadas categorías. En conjunto, estos resultados indican que Word2Vec no resulta adecuado para esta tarea sin mecanismo de contextualización.
+
+### BERT
+
+==== VAL LR + BERT ====
+                precision    recall  f1-score   support
+
+          left       0.31      0.38      0.34       828
+ moderate_left       0.51      0.39      0.44      1572
+moderate_right       0.45      0.31      0.37      1416
+         right       0.23      0.51      0.32       504
+
+      accuracy                           0.38      4320
+     macro avg       0.37      0.40      0.37      4320
+  weighted avg       0.42      0.38      0.38      4320
+
+==== TEST LR + BERT ====
+                precision    recall  f1-score   support
+
+          left       0.26      0.35      0.30       640
+ moderate_left       0.55      0.36      0.43      1440
+moderate_right       0.46      0.38      0.41      1080
+         right       0.24      0.49      0.32       440
+
+      accuracy                           0.38      3600
+     macro avg       0.38      0.39      0.37      3600
+  weighted avg       0.43      0.38      0.39      3600
+==== VAL SVM + BERT ====
+                precision    recall  f1-score   support
+
+          left       0.31      0.39      0.34       828
+ moderate_left       0.52      0.37      0.44      1572
+moderate_right       0.47      0.32      0.38      1416
+         right       0.23      0.55      0.32       504
+
+      accuracy                           0.38      4320
+     macro avg       0.38      0.41      0.37      4320
+  weighted avg       0.43      0.38      0.39      4320
+
+==== TEST SVM + BERT ====
+                precision    recall  f1-score   support
+
+          left       0.27      0.38      0.31       640
+ moderate_left       0.56      0.34      0.43      1440
+moderate_right       0.46      0.36      0.40      1080
+         right       0.23      0.50      0.32       440
+
+      accuracy                           0.37      3600
+     macro avg       0.38      0.40      0.36      3600
+  weighted avg       0.44      0.37      0.38      3600
+=== TEST MLP + BERT ===
+              precision    recall  f1-score   support
+
+           0       0.27      0.29      0.28       640
+           1       0.52      0.44      0.48      1440
+           2       0.39      0.55      0.46      1080
+           3       0.30      0.12      0.18       440
+
+    accuracy                           0.41      3600
+   macro avg       0.37      0.35      0.35      3600
+weighted avg       0.41      0.41      0.40      3600
+
+
+### Interpretación de resultados con BERT
+
+Los modelos entrenados con embeddings contextuales de BERT muestran una mejora respecto a Word2Vec y resultados comparables ligeramente superiores a TF-IDF. La accuaracy está entre el 37% y el 41%, siendo la red neuronal multicapa el módulo con mejor rendimiento en el conjunto de test.
+
+El uso de embeddings contextuales permite capturar relaciones semánticas más complejas y dependientes del contexto, lo que se refleja en una mejore recuperación de las clases moderadas y una ligera mejora en la clasificación de las ideologías no moderadas.
+
+A pesar de esta mejora, los resultados siguen siendo moderados, lo que indica que incluso con representaciones avanzadas el problema sigue existiendo. La ambigüedad del lenguaje político y la escasa explicitud ideológica de muchos tweets limitan el rendimiento máximo alcanzable por estos modelos.
+
+### Interpretación general de los resultados
+
+De forma global, los resultados obtenidos muestran que la clasificación ideológica de tweets es una tarea compleja y con un margen de mejora limitado, independientemente del modelo utilizado. Ninguna de las combinaciones evaluadas supera claramente el 45 % de accuracy, lo que pone de manifiesto la ambigüedad inherente al lenguaje político en redes sociales.
+
+Las representaciones clásicas basadas en TF-IDF ofrecen un rendimiento competitivo y estable, mientras que Word2Vec resulta claramente insuficiente para esta tarea debido a la pérdida de información contextual. Los embeddings contextuales de BERT proporcionan la mejor base de representación, especialmente cuando se combinan con modelos más expresivos como redes neuronales.
+
+En todos los casos se observa una mayor confusión entre las clases ideológicas moderadas, lo que sugiere que el discurso político real se distribuye de forma continua más que en categorías discretas claramente separables.
 
 ### Parte 2: Representación vectorial del texto
 
