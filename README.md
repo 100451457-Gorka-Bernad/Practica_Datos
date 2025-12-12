@@ -77,6 +77,7 @@ Para ello utilizamos el conjunto de datos: **POLITiCES 2023: Political Ideology 
 Se ha realizado un análisis exploratorio que incluye:
 
 - Distribución del número de tweets por variable (barras y gráfico circular).
+- ![image alt](https://github.com/100451457-Gorka-Bernad/Practica_Datos/blob/main/img/embedings3.png?raw=true)
 - Distribución de ideologías (barras subdivididas por género y profesión).
 - Histograma de la longitud de los tweets.
 - Nubes de palabras antes de la limpieza para visualizar diferencias.
