@@ -192,19 +192,19 @@ Ambos vectores se concatenaron para formar la representación final de cada twee
 ##### Visualización de embeddings promedio por ideología
 
 **Embeddings promedio – conjunto de entrenamiento**  
-![Embeddings promedio - Train](img/embedings1.png)
+![Embeddings promedio - Train](img/emb_word.png)
 
 **Embeddings promedio – Moderate Left**  
-![Embeddings promedio - Moderate Left](img/embedings5.png)
+![Embeddings promedio - Moderate Left](img/word_moderate_left.png)
 
 **Embeddings promedio – Left**  
-![Embeddings promedio - Left](img/embedings6.png)
+![Embeddings promedio - Left](img/word_left.png)
 
 **Embeddings promedio – Moderate Right**  
-![Embeddings promedio - Moderate Right](img/embedings7.png)
+![Embeddings promedio - Moderate Right](img/word_moderate_right.png)
 
 **Embeddings promedio – Right**  
-![Embeddings promedio - Right](img/embedings3.png)
+![Embeddings promedio - Right](img/word_right.png)
 
 **Matriz de similitud semántica promedio entre clases ideológicas**
 ![calor](img/calor.png)
