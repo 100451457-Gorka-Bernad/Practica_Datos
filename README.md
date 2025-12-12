@@ -121,51 +121,93 @@ En conjunto, las nubes evidencian que el texto bruto contiene un alto nivel de r
 La figura muestra la distribución de la longitud de los tweets, medida en número de palabras, para cada ideología. Se observa que las cuatro categorías presentan rangos y medianas similares, con una dispersión comparable y sin diferencias claras en la extensión de los mensajes. Esto indica que la longitud del tweet no varía de forma apreciable entre ideologías y que, a priori, no parece un factor diferenciador dentro del conjunto de datos.
 
 
-
 ### Parte 2: Representación vectorial del texto
 
-Primero se ha realizado un preprocesado del texto, es decir, se ha aplicado una función de limpieza aplicada a todos los tweets para quitar palabras como preposiciones, @user, urls etc que pueden obstaculizar el entrenamiento y análisis.
+Antes de aplicar cualquier técnica de representación vectorial, se realizó un **preprocesado del texto** sobre todos los tweets del conjunto de datos. Este proceso de limpieza incluye la eliminación de palabras vacías (artículos, preposiciones), menciones a usuarios (`@user`), URLs y otros elementos propios de Twitter que no aportan información semántica relevante y pueden obstaculizar el entrenamiento y el análisis posterior.
 
-Se han comparado tres estrategias de representación diferentes:
+A continuación, se comparan tres estrategias diferentes de representación del texto.
 
-#### 1) TF-IDF
+---
 
-Se utilizó un modelo TF-IDF como representación léxica, implementado con TfidfVectorizer de scikit-learn. Esta representación genera una matriz (sparse), que posteriormente se utilizará para el entrenamiento. 
+#### 1) Representación léxica mediante TF-IDF
 
-**Dimensiones resultantes:**
+Se utilizó un modelo **TF-IDF (Term Frequency–Inverse Document Frequency)** como representación léxica, implementado mediante `TfidfVectorizer` de *scikit-learn*. Esta técnica genera una matriz dispersa (*sparse*) que refleja la importancia relativa de cada término en el conjunto de documentos, y que posteriormente se emplea como entrada para los modelos de clasificación.
 
-Dimensiones de la matriz TF-IDF train set: (10080, 5000)
-Dimensiones de la matriz TF-IDF validation set: (4320, 5000)
-Dimensiones de la matriz TF-IDF test set: (3600, 5000)
+##### Dimensiones resultantes de la matriz TF-IDF
 
-**Top de palabras:**
+- Train set: **(10080, 5000)**
+- Validation set: **(4320, 5000)**
+- Test set: **(3600, 5000)**
+
+##### Palabras con mayor peso TF-IDF
+
 ```
-gracias 120.42329743534857
-gobierno 114.02342568299336
-españa 108.04524812075806
-años 103.31815510207267
-ley 73.8876495764722
-madrid 73.55735486730096
-gente 62.00059070603916
-mundo 57.86676803313677
-año 57.616455598756076
-país 56.73649979797708
-vida 51.558217904449194
-política 51.050209914265466
-cosas 50.534957525232606
-trabajo 46.406209030332995
-mujeres 45.45618114939983
-presidente 45.32934029053684
-izquierda 43.91606330164386
-personas 43.69479463570944
-partido 43.17438344134408
-historia 42.03383842885117
+gracias       120.42
+gobierno      114.02
+españa        108.05
+años          103.32
+ley            73.89
+madrid         73.56
+gente          62.00
+mundo          57.87
+año            57.62
+país           56.74
+vida           51.56
+política       51.05
+cosas          50.53
+trabajo        46.41
+mujeres        45.46
+presidente     45.33
+izquierda      43.92
+personas       43.69
+partido        43.17
+historia       42.03
 ```
-![nube 4](https://github.com/100451457-Gorka-Bernad/Practica_Datos/blob/main/img/nube4.png)
 
-#### 2) Word2Vec
+##### Nubes de palabras tras limpieza del texto (TF-IDF)
 
-Se entrena con un corpus de tweets limpios, se concatenan el promedio y máximo de embeddings de las palabras. Dado que Word2Vec solo produce embeddings a nivel de palabra, la representación final de cada tweet se ha obtenido mediante el promedio más el máximo, es decir, cada tweet se transformó en un vector concatenando el promedio de los embeddings de todas las palabras y el máximo calculado elemento a elemento para todas las palabras.
+**Ideología: Left**  
+![Nube TF-IDF - Left](img/nube_left.png)
+
+**Ideología: Moderate Left**  
+![Nube TF-IDF - Moderate Left](img/nube_moderate_left.png)
+
+**Ideología: Right**  
+![Nube TF-IDF - Right](img/nube_right.png)
+
+**Ideología: Moderate Right**  
+![Nube TF-IDF - Moderate Right](img/nube_moderate_right.png)
+
+---
+
+#### 2) Representación semántica mediante Word2Vec
+
+Para la representación semántica se entrenó un modelo **Word2Vec** sobre el corpus de tweets ya limpiados. Dado que Word2Vec genera embeddings a nivel de palabra, la representación final de cada tweet se obtuvo combinando dos agregaciones:
+
+- El **promedio** de los embeddings de todas las palabras del tweet.
+- El **máximo** elemento a elemento de esos embeddings.
+
+Ambos vectores se concatenaron para formar la representación final de cada tweet.
+
+##### Visualización de embeddings promedio por ideología
+
+**Embeddings promedio – conjunto de entrenamiento**  
+![Embeddings promedio - Train](img/embedings1.png)
+
+**Embeddings promedio – Moderate Left**  
+![Embeddings promedio - Moderate Left](img/embedings2.png)
+
+**Embeddings promedio – Left**  
+![Embeddings promedio - Left](img/embedings3.png)
+
+**Embeddings promedio – Moderate Right**  
+![Embeddings promedio - Moderate Right](img/embedings4.png)
+
+**Embeddings promedio – Right**  
+![Embeddings promedio - Right](img/embedings5.png)
+
+**Matriz de similitud semántica promedio entre clases ideológicas**
+¡[calor](img/calor.png)
 
 #### 3) BERT Embeddings (Contextuales)
 
