@@ -92,7 +92,7 @@ Para que las imágenes se vean correctamente en GitHub:
 ```md
 ![image alt](https://github.com/100451457-Gorka-Bernad/Practica_Datos/blob/main/img/embedings3.png?raw=true)
 ```
-
+![image alt](https://github.com/100451457-Gorka-Bernad/Practica_Datos/blob/main/img/embedings3.png?raw=true)
 ---
 
 ### Parte 2: Representación vectorial del texto
