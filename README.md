@@ -139,7 +139,7 @@ Dimensiones de la matriz TF-IDF validation set: (4320, 5000)
 Dimensiones de la matriz TF-IDF test set: (3600, 5000)
 
 **Top de palabras:**
-
+```
 gracias 120.42329743534857
 gobierno 114.02342568299336
 españa 108.04524812075806
@@ -160,8 +160,8 @@ izquierda 43.91606330164386
 personas 43.69479463570944
 partido 43.17438344134408
 historia 42.03383842885117
-
-¡[nube 4](https://github.com/100451457-Gorka-Bernad/Practica_Datos/blob/main/img/nube4.png)
+```
+![nube 4](https://github.com/100451457-Gorka-Bernad/Practica_Datos/blob/main/img/nube4.png)
 
 #### 2) Word2Vec
 
