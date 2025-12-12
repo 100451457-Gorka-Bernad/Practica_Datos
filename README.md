@@ -5,7 +5,7 @@
 - Patricia Barbero Rodríguez — 100363955  
 - Gorka Bernad Santos — 100451457  
 - Macarena Fernández Rodríguez — 100384038  
-- Belén Larrabeiti Martínez — 10384072  
+- Belén Larrabeiti Martínez — 100384072  
 
 ---
 
